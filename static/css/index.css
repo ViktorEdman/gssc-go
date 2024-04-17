@@ -1,0 +1,28 @@
+.green {
+  background-color: green
+}
+
+.red {
+  background-color: red
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.htmx-added.fade-me-in {
+  opacity: 0;
+}
+
+.fade-me-in {
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+input {
+  color: black;
+}

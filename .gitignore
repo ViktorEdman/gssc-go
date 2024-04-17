@@ -1,0 +1,7 @@
+node_modules/
+tmp/
+**/data.db
+authorized_users.txt
+bin/
+bin/**
+.env

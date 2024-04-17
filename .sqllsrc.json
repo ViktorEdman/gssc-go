@@ -1,0 +1,5 @@
+    {
+      "name": "sqlite",
+      "adapter": "sqlite3",
+      "filename": "./data.db"
+    }
