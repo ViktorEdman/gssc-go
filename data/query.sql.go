@@ -89,7 +89,7 @@ INSERT INTO gameservers (
 ) VALUES (
   ?, ?, ?, ?
 )
-RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand
+RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand
 `
 
 type CreateGameServerParams struct {
@@ -115,7 +115,7 @@ func (q *Queries) CreateGameServer(ctx context.Context, arg CreateGameServerPara
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,
@@ -135,7 +135,7 @@ func (q *Queries) DeleteAllStatusesByServer(ctx context.Context, serverid int64)
 const deleteGameServer = `-- name: DeleteGameServer :one
 DELETE FROM gameservers
 WHERE id = ?
-RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand
+RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand
 `
 
 func (q *Queries) DeleteGameServer(ctx context.Context, id int64) (Gameserver, error) {
@@ -149,7 +149,7 @@ func (q *Queries) DeleteGameServer(ctx context.Context, id int64) (Gameserver, e
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,
@@ -158,7 +158,7 @@ func (q *Queries) DeleteGameServer(ctx context.Context, id int64) (Gameserver, e
 }
 
 const getAllServersWithLatestStatus = `-- name: GetAllServersWithLatestStatus :many
-select gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.localgsmserver, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp)
+select gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.lgsmenabled, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp)
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
 group by serverstatuses.serverid
@@ -188,7 +188,7 @@ func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllSe
 			&i.Gameserver.Monitored,
 			&i.Gameserver.Protocol,
 			&i.Gameserver.Port,
-			&i.Gameserver.Localgsmserver,
+			&i.Gameserver.Lgsmenabled,
 			&i.Gameserver.Lgsmuser,
 			&i.Gameserver.Lgsmpassword,
 			&i.Gameserver.Lgsmcommand,
@@ -221,7 +221,7 @@ func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllSe
 }
 
 const getCurrentStatusForServer = `-- name: GetCurrentStatusForServer :one
-SELECT gameservers.id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand, serverstatuses.id, serverid, game, currentplayers, maxplayers, map, servername, password, connectport, version, steamid, online, timestamp from gameservers
+SELECT gameservers.id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand, serverstatuses.id, serverid, game, currentplayers, maxplayers, map, servername, password, connectport, version, steamid, online, timestamp from gameservers
 join serverstatuses on serverstatuses.serverid=gameservers.id where gameservers.id=?
 ORDER BY TIMESTAMP DESC
 LIMIT 1
@@ -235,7 +235,7 @@ type GetCurrentStatusForServerRow struct {
 	Monitored           bool       `db:"monitored" json:"monitored"`
 	Protocol            *string    `db:"protocol" json:"protocol"`
 	Port                int64      `db:"port" json:"port"`
-	Localgsmserver      bool       `db:"localgsmserver" json:"localgsmserver"`
+	Lgsmenabled         bool       `db:"lgsmenabled" json:"lgsmenabled"`
 	Lgsmuser            *string    `db:"lgsmuser" json:"lgsmuser"`
 	Lgsmpassword        *string    `db:"lgsmpassword" json:"lgsmpassword"`
 	Lgsmcommand         *string    `db:"lgsmcommand" json:"lgsmcommand"`
@@ -265,7 +265,7 @@ func (q *Queries) GetCurrentStatusForServer(ctx context.Context, id int64) (GetC
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,
@@ -287,7 +287,7 @@ func (q *Queries) GetCurrentStatusForServer(ctx context.Context, id int64) (GetC
 }
 
 const getGameServer = `-- name: GetGameServer :one
-SELECT id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand FROM gameservers
+SELECT id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand FROM gameservers
 WHERE id = ?
 LIMIT 1
 `
@@ -303,7 +303,7 @@ func (q *Queries) GetGameServer(ctx context.Context, id int64) (Gameserver, erro
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,
@@ -332,7 +332,7 @@ func (q *Queries) GetLastUpdateAndScanInterval(ctx context.Context, id int64) (G
 }
 
 const getLatestServerStatus = `-- name: GetLatestServerStatus :one
-SELECT gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.localgsmserver, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp) FROM serverstatuses
+SELECT gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.lgsmenabled, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp) FROM serverstatuses
 left join gameservers on gameservers.id=serverstatuses.serverid
 WHERE serverid = ?
 ORDER BY TIMESTAMP DESC 
@@ -356,7 +356,7 @@ func (q *Queries) GetLatestServerStatus(ctx context.Context, serverid int64) (Ge
 		&i.Gameserver.Monitored,
 		&i.Gameserver.Protocol,
 		&i.Gameserver.Port,
-		&i.Gameserver.Localgsmserver,
+		&i.Gameserver.Lgsmenabled,
 		&i.Gameserver.Lgsmuser,
 		&i.Gameserver.Lgsmpassword,
 		&i.Gameserver.Lgsmcommand,
@@ -407,7 +407,7 @@ func (q *Queries) GetPlayersFromStatus(ctx context.Context, statusid int64) ([]s
 }
 
 const listGameServers = `-- name: ListGameServers :many
-SELECT id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand FROM gameservers
+SELECT id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand FROM gameservers
 ORDER BY name
 `
 
@@ -428,7 +428,7 @@ func (q *Queries) ListGameServers(ctx context.Context) ([]Gameserver, error) {
 			&i.Monitored,
 			&i.Protocol,
 			&i.Port,
-			&i.Localgsmserver,
+			&i.Lgsmenabled,
 			&i.Lgsmuser,
 			&i.Lgsmpassword,
 			&i.Lgsmcommand,
@@ -493,7 +493,7 @@ set
   protocol = ?
 WHERE
   id = ?
-RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand
+RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand
 `
 
 type SetGameServerProtocolParams struct {
@@ -512,7 +512,7 @@ func (q *Queries) SetGameServerProtocol(ctx context.Context, arg SetGameServerPr
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,
@@ -521,7 +521,7 @@ func (q *Queries) SetGameServerProtocol(ctx context.Context, arg SetGameServerPr
 }
 
 const test = `-- name: Test :exec
-SELECT id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand from gameservers
+SELECT id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand from gameservers
 `
 
 func (q *Queries) Test(ctx context.Context) error {
@@ -536,19 +536,27 @@ set
   host = ?,
   port = ?,
   scanIntervalSeconds = ?,
-  monitored = ?
+  monitored = ?,
+  lgsmenabled = ?,
+  lgsmuser = ?,
+  lgsmpassword = ?,
+  lgsmpassword = ?
 WHERE 
   id = ?
-RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, localgsmserver, lgsmuser, lgsmpassword, lgsmcommand
+RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand
 `
 
 type UpdateGameServerParams struct {
-	Name                string `db:"name" json:"name"`
-	Host                string `db:"host" json:"host"`
-	Port                int64  `db:"port" json:"port"`
-	Scanintervalseconds int64  `db:"scanintervalseconds" json:"scanintervalseconds"`
-	Monitored           bool   `db:"monitored" json:"monitored"`
-	ID                  int64  `db:"id" json:"id"`
+	Name                string  `db:"name" json:"name"`
+	Host                string  `db:"host" json:"host"`
+	Port                int64   `db:"port" json:"port"`
+	Scanintervalseconds int64   `db:"scanintervalseconds" json:"scanintervalseconds"`
+	Monitored           bool    `db:"monitored" json:"monitored"`
+	Lgsmenabled         bool    `db:"lgsmenabled" json:"lgsmenabled"`
+	Lgsmuser            *string `db:"lgsmuser" json:"lgsmuser"`
+	Lgsmpassword        *string `db:"lgsmpassword" json:"lgsmpassword"`
+	Lgsmpassword_2      *string `db:"lgsmpassword_2" json:"lgsmpassword_2"`
+	ID                  int64   `db:"id" json:"id"`
 }
 
 func (q *Queries) UpdateGameServer(ctx context.Context, arg UpdateGameServerParams) (Gameserver, error) {
@@ -558,6 +566,10 @@ func (q *Queries) UpdateGameServer(ctx context.Context, arg UpdateGameServerPara
 		arg.Port,
 		arg.Scanintervalseconds,
 		arg.Monitored,
+		arg.Lgsmenabled,
+		arg.Lgsmuser,
+		arg.Lgsmpassword,
+		arg.Lgsmpassword_2,
 		arg.ID,
 	)
 	var i Gameserver
@@ -569,7 +581,7 @@ func (q *Queries) UpdateGameServer(ctx context.Context, arg UpdateGameServerPara
 		&i.Monitored,
 		&i.Protocol,
 		&i.Port,
-		&i.Localgsmserver,
+		&i.Lgsmenabled,
 		&i.Lgsmuser,
 		&i.Lgsmpassword,
 		&i.Lgsmcommand,

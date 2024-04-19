@@ -16,6 +16,7 @@ templ AddServerForm() {
 			<input type="number" autocomplete="off" required min="1024" max="65565" name="port"/>
 			<label for="scaninterval">Seconds between scans</label>
 			<input type="number" required min="10" max="600" name="scaninterval" value="30"/>
+			@LinuxGSMFormPartial(&data.Gameserver{ID: 99})
 			<div class="flex flex-row">
 				<button class="rounded-xl bg-green-400 p-2 m-2 w-24" type="submit">Add</button>
 				<button
@@ -34,14 +35,14 @@ templ LinuxGSMFormPartial(server *data.Gameserver) {
 		<input
 			name="gsmenabled"
 			type="checkbox"
-			if server.Localgsmserver {
+			if server.Lgsmenabled {
 				checked
 			}
 			onchange={ LinuxGSMForm(server.ID) }
 			id={ "gsmenabled-" + fmt.Sprint(server.ID) }
 		/>
 	</div>
-	<div class="flex flex-col hidden" id={ "gsmcredentials-" + fmt.Sprint(server.ID) }>
+	<div class="flex-col hidden" id={ "gsmcredentials-" + fmt.Sprint(server.ID) }>
 		<label for="lgsmuser">LGSM username</label>
 		<input name="lgsmuser"/>
 		<label for="lgsmpassword">LGSM password</label>
@@ -57,9 +58,11 @@ script LinuxGSMForm(id int64) {
   console.log(credentialsForm)
   if (checked) {
     credentialsForm.classList.remove("hidden")
+    credentialsForm.classList.add("flex")
     return
     }
   credentialsForm.classList.add("hidden")
+  credentialsForm.classList.remove("flex")
 
 }
 
@@ -111,7 +114,7 @@ templ layout() {
 				<meta http-equiv="refresh" content="30"/>
 			</noscript>
 		</head>
-		<body class="h-screen bg-gradient-to-t from-[#d1138f] to-[#183d88]">
+		<body class="h-full bg-gradient-to-t from-[#d1138f] to-[#183d88] bg-no-repeat bg-fixed">
 			{ children... }
 			@AddServerForm()
 			<script>

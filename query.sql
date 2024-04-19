@@ -22,7 +22,11 @@ set
   host = ?,
   port = ?,
   scanIntervalSeconds = ?,
-  monitored = ?
+  monitored = ?,
+  lgsmenabled = ?,
+  lgsmuser = ?,
+  lgsmpassword = ?,
+  lgsmpassword = ?
 WHERE 
   id = ?
 RETURNING *;

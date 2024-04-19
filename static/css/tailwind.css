@@ -609,13 +609,13 @@ video {
   display: none;
 }
 
+.h-full {
+  height: 100%;
+}
+
 .h-max {
   height: -moz-max-content;
   height: max-content;
-}
-
-.h-screen {
-  height: 100vh;
 }
 
 .w-16 {
@@ -717,6 +717,14 @@ video {
 
 .to-\[\#183d88\] {
   --tw-gradient-to: #183d88 var(--tw-gradient-to-position);
+}
+
+.bg-fixed {
+  background-attachment: fixed;
+}
+
+.bg-no-repeat {
+  background-repeat: no-repeat;
 }
 
 .p-2 {

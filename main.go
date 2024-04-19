@@ -163,6 +163,7 @@ func putServerHandler(w http.ResponseWriter, r *http.Request) {
 	monitored := r.FormValue("ismonitored") == "on"
 	scaninterval, scanErr := strconv.ParseInt(r.FormValue("scaninterval"), 10, 64)
 	port, err := strconv.ParseInt(r.FormValue("port"), 10, 64)
+	fmt.Println(r.Form)
 	if scanErr != nil || err != nil || host == "" || name == "" {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		fmt.Fprint(w, "Missing values")

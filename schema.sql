@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS gameservers (
   monitored boolean not null default true,
   protocol text,
   port INTEGER NOT NULL,
-  localgsmserver boolean not null default false,
+  lgsmenabled boolean not null default false,
   lgsmuser text,
   lgsmpassword text,
   lgsmcommand text

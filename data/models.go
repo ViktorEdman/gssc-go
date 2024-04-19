@@ -16,7 +16,7 @@ type Gameserver struct {
 	Monitored           bool    `db:"monitored" json:"monitored"`
 	Protocol            *string `db:"protocol" json:"protocol"`
 	Port                int64   `db:"port" json:"port"`
-	Localgsmserver      bool    `db:"localgsmserver" json:"localgsmserver"`
+	Lgsmenabled         bool    `db:"lgsmenabled" json:"lgsmenabled"`
 	Lgsmuser            *string `db:"lgsmuser" json:"lgsmuser"`
 	Lgsmpassword        *string `db:"lgsmpassword" json:"lgsmpassword"`
 	Lgsmcommand         *string `db:"lgsmcommand" json:"lgsmcommand"`

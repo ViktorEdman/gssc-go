@@ -28,7 +28,15 @@ func AddServerForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"addServerDialog\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white \"><form hx-post=\"/servers\" id=\"addServerForm\" class=\"flex flex-col w-max h-max p-4 fade-me-in bg-black \" hx-on::after-request=\"this.reset(); document.querySelector(&#34;#addServerDialog&#34;).close()\" hx-swap=\"none\"><label for=\"name\">Server name</label> <input type=\"text\" autocomplete=\"off\" autofocus required name=\"name\"> <label for=\"host\">Hostname / IP address</label> <input type=\"text\" autocomplete=\"off\" required name=\"host\"> <label for=\"port\">Port number</label> <input type=\"number\" autocomplete=\"off\" required min=\"1024\" max=\"65565\" name=\"port\"> <label for=\"scaninterval\">Seconds between scans</label> <input type=\"number\" required min=\"10\" max=\"600\" name=\"scaninterval\" value=\"30\"><div class=\"flex flex-row\"><button class=\"rounded-xl bg-green-400 p-2 m-2 w-24\" type=\"submit\">Add</button> <button class=\"rounded-xl bg-red-400 p-2 m-2 cancel-button w-24\" type=\"reset\" onclick=\"document.querySelector(&#34;#addServerDialog&#34;).close()\">Cancel</button></div></form></dialog>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"addServerDialog\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white \"><form hx-post=\"/servers\" id=\"addServerForm\" class=\"flex flex-col w-max h-max p-4 fade-me-in bg-black \" hx-on::after-request=\"this.reset(); document.querySelector(&#34;#addServerDialog&#34;).close()\" hx-swap=\"none\"><label for=\"name\">Server name</label> <input type=\"text\" autocomplete=\"off\" autofocus required name=\"name\"> <label for=\"host\">Hostname / IP address</label> <input type=\"text\" autocomplete=\"off\" required name=\"host\"> <label for=\"port\">Port number</label> <input type=\"number\" autocomplete=\"off\" required min=\"1024\" max=\"65565\" name=\"port\"> <label for=\"scaninterval\">Seconds between scans</label> <input type=\"number\" required min=\"10\" max=\"600\" name=\"scaninterval\" value=\"30\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = LinuxGSMFormPartial(&data.Gameserver{ID: 99}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row\"><button class=\"rounded-xl bg-green-400 p-2 m-2 w-24\" type=\"submit\">Add</button> <button class=\"rounded-xl bg-red-400 p-2 m-2 cancel-button w-24\" type=\"reset\" onclick=\"document.querySelector(&#34;#addServerDialog&#34;).close()\">Cancel</button></div></form></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +72,7 @@ func LinuxGSMFormPartial(server *data.Gameserver) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if server.Localgsmserver {
+		if server.Lgsmenabled {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" checked")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -87,7 +95,7 @@ func LinuxGSMFormPartial(server *data.Gameserver) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div class=\"flex flex-col hidden\" id=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div class=\"flex-col hidden\" id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -108,19 +116,21 @@ func LinuxGSMFormPartial(server *data.Gameserver) templ.Component {
 
 func LinuxGSMForm(id int64) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_LinuxGSMForm_32fa`,
-		Function: `function __templ_LinuxGSMForm_32fa(id){const checked = event.target.checked
+		Name: `__templ_LinuxGSMForm_89e0`,
+		Function: `function __templ_LinuxGSMForm_89e0(id){const checked = event.target.checked
   const credentialsForm = document.querySelector(` + "`" + `#gsmcredentials-${id}` + "`" + `)
   console.log(credentialsForm)
   if (checked) {
     credentialsForm.classList.remove("hidden")
+    credentialsForm.classList.add("flex")
     return
     }
   credentialsForm.classList.add("hidden")
+  credentialsForm.classList.remove("flex")
 
 }`,
-		Call:       templ.SafeScript(`__templ_LinuxGSMForm_32fa`, id),
-		CallInline: templ.SafeScriptInline(`__templ_LinuxGSMForm_32fa`, id),
+		Call:       templ.SafeScript(`__templ_LinuxGSMForm_89e0`, id),
+		CallInline: templ.SafeScriptInline(`__templ_LinuxGSMForm_89e0`, id),
 	}
 }
 
@@ -243,7 +253,7 @@ func layout() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><link href=\"static/css/tailwind.css\" rel=\"stylesheet\"><link href=\"static/css/index.css\" rel=\"stylesheet\"><link rel=\"icon\" href=\"static/img/favicon.png\"><meta name=\"description\" content=\"Monitor and edit game servers\"><title>GSS Enterprise</title><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/sse.js\"></script><script>\n        function removeParent(e) {\n            e.preventDefault()\n            console.log(e)\n            console.log(this)\n        }\n      </script><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><noscript><meta http-equiv=\"refresh\" content=\"30\"></noscript></head><body class=\"h-screen bg-gradient-to-t from-[#d1138f] to-[#183d88]\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><link href=\"static/css/tailwind.css\" rel=\"stylesheet\"><link href=\"static/css/index.css\" rel=\"stylesheet\"><link rel=\"icon\" href=\"static/img/favicon.png\"><meta name=\"description\" content=\"Monitor and edit game servers\"><title>GSS Enterprise</title><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/sse.js\"></script><script>\n        function removeParent(e) {\n            e.preventDefault()\n            console.log(e)\n            console.log(this)\n        }\n      </script><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><noscript><meta http-equiv=\"refresh\" content=\"30\"></noscript></head><body class=\"h-full bg-gradient-to-t from-[#d1138f] to-[#183d88] bg-no-repeat bg-fixed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -302,7 +312,7 @@ func Index(servers []types.ServerStatusWithPlayers) templ.Component {
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(
 				fmt.Sprint(isAuthorized(ctx)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 154, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 157, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -330,7 +340,7 @@ func Index(servers []types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(getTimestamp())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 169, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 172, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -459,7 +469,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(server.Gameserver.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 210, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 213, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -497,7 +507,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(*server.Serverstatus.Currentplayers))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 221, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 224, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -510,7 +520,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(*server.Serverstatus.Maxplayers))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 221, Col: 128}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 224, Col: 128}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -529,7 +539,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(*server.Serverstatus.Game)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 224, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 227, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -553,7 +563,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(player)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 229, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 232, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -577,7 +587,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(server.Gameserver.Host)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 234, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 237, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -590,7 +600,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(*server.Serverstatus.Connectport))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 234, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 237, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -619,7 +629,7 @@ func ServerTemplate(server types.ServerStatusWithPlayers) templ.Component {
 			server.Serverstatus.Timestamp.Local().Minute(),
 			server.Serverstatus.Timestamp.Local().Second()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 240, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/templates.templ`, Line: 243, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
