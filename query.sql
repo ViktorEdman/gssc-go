@@ -26,7 +26,8 @@ set
   lgsmenabled = ?,
   lgsmuser = ?,
   lgsmpassword = ?,
-  lgsmpassword = ?
+  lgsmpassword = ?,
+  protocol = null
 WHERE 
   id = ?
 RETURNING *;

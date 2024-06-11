@@ -540,7 +540,8 @@ set
   lgsmenabled = ?,
   lgsmuser = ?,
   lgsmpassword = ?,
-  lgsmpassword = ?
+  lgsmpassword = ?,
+  protocol = null
 WHERE 
   id = ?
 RETURNING id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand
