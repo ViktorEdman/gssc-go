@@ -38,6 +38,6 @@ CREATE TABLE IF NOT EXISTS serverstatusplayers(
   FOREIGN KEY(statusid) REFERENCES serverstatuses(id)
 );
 
-CREATE INDEX idx_serverstatuses_serverid ON serverstatuses (serverid);
-CREATE INDEX idx_serverstatusplayers_statusid ON serverstatusplayers (statusid);
-CREATE INDEX idx_serverstatuses_timestamp ON serverstatuses ("timestamp");
+CREATE INDEX IF NOT EXISTS idx_serverstatuses_serverid ON serverstatuses (serverid);
+CREATE INDEX IF NOT EXISTS idx_serverstatusplayers_statusid ON serverstatusplayers (statusid);
+CREATE INDEX IF NOT EXISTS idx_serverstatuses_timestamp ON serverstatuses ("timestamp");
