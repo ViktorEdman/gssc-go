@@ -5,3 +5,4 @@ authorized_users.txt
 bin/
 bin/**
 .env
+**/*.db
