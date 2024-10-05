@@ -520,15 +520,6 @@ func (q *Queries) SetGameServerProtocol(ctx context.Context, arg SetGameServerPr
 	return i, err
 }
 
-const test = `-- name: Test :exec
-SELECT id, name, host, scanintervalseconds, monitored, protocol, port, lgsmenabled, lgsmuser, lgsmpassword, lgsmcommand from gameservers
-`
-
-func (q *Queries) Test(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, test)
-	return err
-}
-
 const updateGameServer = `-- name: UpdateGameServer :one
 UPDATE gameservers
 set

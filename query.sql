@@ -96,5 +96,3 @@ INSERT INTO serverstatusplayers(
 SELECT playerName FROM serverstatusplayers
 WHERE statusid=?;
 
--- name: Test :exec 
-SELECT * from gameservers;
