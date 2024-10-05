@@ -46,13 +46,35 @@ WHERE id = ?
 RETURNING *;
 
 -- name: GetLatestServerStatus :one
-SELECT sqlc.embed(gameservers), sqlc.embed(serverstatuses), MAX(timestamp) FROM serverstatuses
+SELECT 
+  gameservers.id,
+  gameservers.name,
+  gameservers.host,
+  gameservers.monitored,
+  serverstatuses.game,
+  serverstatuses.connectport,
+  serverstatuses.online,
+  serverstatuses.currentplayers,
+  serverstatuses.maxplayers,
+  serverstatuses.timestamp
+ FROM serverstatuses
 left join gameservers on gameservers.id=serverstatuses.serverid
 WHERE serverid = ?
 ORDER BY TIMESTAMP DESC 
 LIMIT 1;
 -- name: GetAllServersWithLatestStatus :many
-select sqlc.embed(gameservers), sqlc.embed(serverstatuses), MAX(timestamp)
+select 
+  gameservers.id,
+  gameservers.name,
+  gameservers.host,
+  gameservers.monitored,
+  serverstatuses.game,
+  serverstatuses.connectport,
+  serverstatuses.online,
+  serverstatuses.currentplayers,
+  serverstatuses.maxplayers,
+  serverstatuses.timestamp,
+  MAX(timestamp)
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
 group by serverstatuses.serverid

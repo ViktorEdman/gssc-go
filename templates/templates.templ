@@ -199,33 +199,33 @@ templ ServerList(servers []types.ServerStatusWithPlayers) {
 templ ServerTemplate(server types.ServerStatusWithPlayers) {
 	<li
 		class="basis-52 m-2 p-4 fade-me-in bg-opacity-50 bg-black rounded-xl flex flex-col grow sm:grow-0 "
-		id={ fmt.Sprintf("server-%d", server.Gameserver.ID) }
+		id={ fmt.Sprintf("server-%d", server.ID) }
 		hx-swap="outerHTML"
-		sse-swap={ fmt.Sprintf("server-%d", server.Gameserver.ID) }
+		sse-swap={ fmt.Sprintf("server-%d", server.ID) }
 	>
 		<div>
 			<h2 class="text-xl">
 				<span
-					if server.Serverstatus.Online {
+					if server.Online {
 						class="green dot"
 					} else {
 						class="red dot"
 					}
-				></span>{ server.Gameserver.Name }
-				if !server.Gameserver.Monitored {
+				></span>{ server.Name }
+				if !server.Monitored {
 					is not monitored!
-				} else if !server.Serverstatus.Online {
+				} else if !server.Online {
 					is DOWN!
 				} else {
 					is UP!
 				}
 			</h2>
 		</div>
-		if server.Serverstatus.Online {
-			<h3 class="text-lg">Players { fmt.Sprint(*server.Serverstatus.Currentplayers) }/{ fmt.Sprint(*server.Serverstatus.Maxplayers) }</h3>
+		if server.Online {
+			<h3 class="text-lg">Players { fmt.Sprint(*server.Currentplayers) }/{ fmt.Sprint(*server.Maxplayers) }</h3>
 		}
-		if server.Serverstatus.Game != nil {
-			Running { *server.Serverstatus.Game }
+		if server.Game != nil {
+			Running { *server.Game }
 		}
 		if len(server.Players) > 0 {
 			<ul>
@@ -234,20 +234,20 @@ templ ServerTemplate(server types.ServerStatusWithPlayers) {
 				}
 			</ul>
 		}
-		if server.Serverstatus.Connectport != nil {
-			<div>Join at { server.Gameserver.Host }:{ fmt.Sprint(*server.Serverstatus.Connectport) }</div>
+		if server.Connectport != nil {
+			<div>Join at { server.Host }:{ fmt.Sprint(*server.Connectport) }</div>
 		}
-		<div id={ fmt.Sprintf("timestamp-%d", server.Gameserver.ID) } class="align-bottom table-cell">
+		<div id={ fmt.Sprintf("timestamp-%d", server.ID) } class="align-bottom table-cell">
 			Last update at { fmt.Sprintf("%02d:%02d:%02d",
-      server.Serverstatus.Timestamp.Local().Hour(),
-      server.Serverstatus.Timestamp.Local().Minute(),
-      server.Serverstatus.Timestamp.Local().Second()) }
+      server.Timestamp.Local().Hour(),
+      server.Timestamp.Local().Minute(),
+      server.Timestamp.Local().Second()) }
 		</div>
 		if isAuthorized(ctx) {
 			<h3>Server controls</h3>
 			<div class="flex flex-row mt-auto">
-				<button class="bg-blue-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-get={ fmt.Sprintf("/servers/edit/%d", server.Gameserver.ID) } hx-target={ fmt.Sprintf("#server-%d", server.Gameserver.ID) }>Edit</button>
-				<button class="bg-red-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-delete={ fmt.Sprintf("/servers/%d", server.Gameserver.ID) } hx-target={ fmt.Sprintf("#server-%d", server.Gameserver.ID) }>Delete</button>
+				<button class="bg-blue-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-get={ fmt.Sprintf("/servers/edit/%d", server.ID) } hx-target={ fmt.Sprintf("#server-%d", server.ID) }>Edit</button>
+				<button class="bg-red-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-delete={ fmt.Sprintf("/servers/%d", server.ID) } hx-target={ fmt.Sprintf("#server-%d", server.ID) }>Delete</button>
 			</div>
 		}
 	</li>

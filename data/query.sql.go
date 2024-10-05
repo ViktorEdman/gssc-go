@@ -158,7 +158,18 @@ func (q *Queries) DeleteGameServer(ctx context.Context, id int64) (Gameserver, e
 }
 
 const getAllServersWithLatestStatus = `-- name: GetAllServersWithLatestStatus :many
-select gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.lgsmenabled, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp)
+select 
+  gameservers.id,
+  gameservers.name,
+  gameservers.host,
+  gameservers.monitored,
+  serverstatuses.game,
+  serverstatuses.connectport,
+  serverstatuses.online,
+  serverstatuses.currentplayers,
+  serverstatuses.maxplayers,
+  serverstatuses.timestamp,
+  MAX(timestamp)
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
 group by serverstatuses.serverid
@@ -166,9 +177,17 @@ order by gameservers.id asc
 `
 
 type GetAllServersWithLatestStatusRow struct {
-	Gameserver   Gameserver   `db:"gameserver" json:"gameserver"`
-	Serverstatus Serverstatus `db:"serverstatus" json:"serverstatus"`
-	Max          interface{}  `db:"max" json:"max"`
+	ID             int64       `db:"id" json:"id"`
+	Name           string      `db:"name" json:"name"`
+	Host           string      `db:"host" json:"host"`
+	Monitored      bool        `db:"monitored" json:"monitored"`
+	Game           *string     `db:"game" json:"game"`
+	Connectport    *int64      `db:"connectport" json:"connectport"`
+	Online         bool        `db:"online" json:"online"`
+	Currentplayers *int64      `db:"currentplayers" json:"currentplayers"`
+	Maxplayers     *int64      `db:"maxplayers" json:"maxplayers"`
+	Timestamp      *time.Time  `db:"timestamp" json:"timestamp"`
+	Max            interface{} `db:"max" json:"max"`
 }
 
 func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllServersWithLatestStatusRow, error) {
@@ -181,30 +200,16 @@ func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllSe
 	for rows.Next() {
 		var i GetAllServersWithLatestStatusRow
 		if err := rows.Scan(
-			&i.Gameserver.ID,
-			&i.Gameserver.Name,
-			&i.Gameserver.Host,
-			&i.Gameserver.Scanintervalseconds,
-			&i.Gameserver.Monitored,
-			&i.Gameserver.Protocol,
-			&i.Gameserver.Port,
-			&i.Gameserver.Lgsmenabled,
-			&i.Gameserver.Lgsmuser,
-			&i.Gameserver.Lgsmpassword,
-			&i.Gameserver.Lgsmcommand,
-			&i.Serverstatus.ID,
-			&i.Serverstatus.Serverid,
-			&i.Serverstatus.Game,
-			&i.Serverstatus.Currentplayers,
-			&i.Serverstatus.Maxplayers,
-			&i.Serverstatus.Map,
-			&i.Serverstatus.Servername,
-			&i.Serverstatus.Password,
-			&i.Serverstatus.Connectport,
-			&i.Serverstatus.Version,
-			&i.Serverstatus.Steamid,
-			&i.Serverstatus.Online,
-			&i.Serverstatus.Timestamp,
+			&i.ID,
+			&i.Name,
+			&i.Host,
+			&i.Monitored,
+			&i.Game,
+			&i.Connectport,
+			&i.Online,
+			&i.Currentplayers,
+			&i.Maxplayers,
+			&i.Timestamp,
 			&i.Max,
 		); err != nil {
 			return nil, err
@@ -332,7 +337,18 @@ func (q *Queries) GetLastUpdateAndScanInterval(ctx context.Context, id int64) (G
 }
 
 const getLatestServerStatus = `-- name: GetLatestServerStatus :one
-SELECT gameservers.id, gameservers.name, gameservers.host, gameservers.scanintervalseconds, gameservers.monitored, gameservers.protocol, gameservers.port, gameservers.lgsmenabled, gameservers.lgsmuser, gameservers.lgsmpassword, gameservers.lgsmcommand, serverstatuses.id, serverstatuses.serverid, serverstatuses.game, serverstatuses.currentplayers, serverstatuses.maxplayers, serverstatuses.map, serverstatuses.servername, serverstatuses.password, serverstatuses.connectport, serverstatuses.version, serverstatuses.steamid, serverstatuses.online, serverstatuses.timestamp, MAX(timestamp) FROM serverstatuses
+SELECT 
+  gameservers.id,
+  gameservers.name,
+  gameservers.host,
+  gameservers.monitored,
+  serverstatuses.game,
+  serverstatuses.connectport,
+  serverstatuses.online,
+  serverstatuses.currentplayers,
+  serverstatuses.maxplayers,
+  serverstatuses.timestamp
+ FROM serverstatuses
 left join gameservers on gameservers.id=serverstatuses.serverid
 WHERE serverid = ?
 ORDER BY TIMESTAMP DESC 
@@ -340,40 +356,32 @@ LIMIT 1
 `
 
 type GetLatestServerStatusRow struct {
-	Gameserver   Gameserver   `db:"gameserver" json:"gameserver"`
-	Serverstatus Serverstatus `db:"serverstatus" json:"serverstatus"`
-	Max          interface{}  `db:"max" json:"max"`
+	ID             *int64     `db:"id" json:"id"`
+	Name           *string    `db:"name" json:"name"`
+	Host           *string    `db:"host" json:"host"`
+	Monitored      *bool      `db:"monitored" json:"monitored"`
+	Game           *string    `db:"game" json:"game"`
+	Connectport    *int64     `db:"connectport" json:"connectport"`
+	Online         bool       `db:"online" json:"online"`
+	Currentplayers *int64     `db:"currentplayers" json:"currentplayers"`
+	Maxplayers     *int64     `db:"maxplayers" json:"maxplayers"`
+	Timestamp      *time.Time `db:"timestamp" json:"timestamp"`
 }
 
 func (q *Queries) GetLatestServerStatus(ctx context.Context, serverid int64) (GetLatestServerStatusRow, error) {
 	row := q.db.QueryRowContext(ctx, getLatestServerStatus, serverid)
 	var i GetLatestServerStatusRow
 	err := row.Scan(
-		&i.Gameserver.ID,
-		&i.Gameserver.Name,
-		&i.Gameserver.Host,
-		&i.Gameserver.Scanintervalseconds,
-		&i.Gameserver.Monitored,
-		&i.Gameserver.Protocol,
-		&i.Gameserver.Port,
-		&i.Gameserver.Lgsmenabled,
-		&i.Gameserver.Lgsmuser,
-		&i.Gameserver.Lgsmpassword,
-		&i.Gameserver.Lgsmcommand,
-		&i.Serverstatus.ID,
-		&i.Serverstatus.Serverid,
-		&i.Serverstatus.Game,
-		&i.Serverstatus.Currentplayers,
-		&i.Serverstatus.Maxplayers,
-		&i.Serverstatus.Map,
-		&i.Serverstatus.Servername,
-		&i.Serverstatus.Password,
-		&i.Serverstatus.Connectport,
-		&i.Serverstatus.Version,
-		&i.Serverstatus.Steamid,
-		&i.Serverstatus.Online,
-		&i.Serverstatus.Timestamp,
-		&i.Max,
+		&i.ID,
+		&i.Name,
+		&i.Host,
+		&i.Monitored,
+		&i.Game,
+		&i.Connectport,
+		&i.Online,
+		&i.Currentplayers,
+		&i.Maxplayers,
+		&i.Timestamp,
 	)
 	return i, err
 }

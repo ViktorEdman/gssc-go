@@ -13,10 +13,19 @@ func GetLatestStatusWithPlayer(id int64, db *data.Queries) (status *types.Server
 		return nil, err
 	}
 	status = &types.ServerStatusWithPlayers{
-		Gameserver:   server.Gameserver,
-		Serverstatus: server.Serverstatus,
+		ID:             *server.ID,
+		Name:           *server.Name,
+		Host:           *server.Host,
+		Monitored:      *server.Monitored,
+		Connectport:    server.Connectport,
+		Game:           server.Game,
+		Online:         server.Online,
+		Currentplayers: server.Currentplayers,
+		Maxplayers:     server.Maxplayers,
+		Timestamp:      server.Timestamp,
+		Players:        []string{},
 	}
-	players, err := db.GetPlayersFromStatus(context.Background(), status.Serverstatus.ID)
+	players, err := db.GetPlayersFromStatus(context.Background(), status.ID)
 	if err != nil {
 		return status, nil
 	}

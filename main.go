@@ -99,12 +99,21 @@ func getLatestStatusesWithPlayers() (statuses []types.ServerStatusWithPlayers, e
 	if err != nil {
 		return nil, err
 	}
-	for i := range servers {
+	for _, server := range servers {
 		status := types.ServerStatusWithPlayers{
-			Gameserver:   servers[i].Gameserver,
-			Serverstatus: servers[i].Serverstatus,
+			ID:             server.ID,
+			Name:           server.Name,
+			Host:           server.Host,
+			Monitored:      server.Monitored,
+			Connectport:    server.Connectport,
+			Game:           server.Game,
+			Online:         server.Online,
+			Currentplayers: server.Currentplayers,
+			Maxplayers:     server.Maxplayers,
+			Timestamp:      server.Timestamp,
+			Players:        []string{},
 		}
-		players, err := db.GetPlayersFromStatus(context.Background(), status.Serverstatus.ID)
+		players, err := db.GetPlayersFromStatus(context.Background(), status.ID)
 		if err != nil {
 			statuses = append(statuses, status)
 			continue
