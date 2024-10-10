@@ -93,15 +93,16 @@ templ EditServerForm(server data.Gameserver) {
 }
 
 templ layout() {
-	<html>
+	<!DOCTYPE html>
+	<html lang="en">
 		<head>
 			<link href="static/css/tailwind.css" rel="stylesheet"/>
 			<link href="static/css/index.css" rel="stylesheet"/>
 			<link rel="icon" href="static/img/favicon.png"/>
 			<meta name="description" content="Monitor and edit game servers"/>
 			<title>GSS Enterprise</title>
-			<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-			<script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
+			<script src="static/js/htmx.min.js"></script>
+			<script src="static/js/sse.min.js"></script>
 			<script>
         function removeParent(e) {
             e.preventDefault()
