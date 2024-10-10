@@ -428,16 +428,19 @@ func minecraftQuery(ctx context.Context, host string, port uint16) (*api.Respons
 	if err != nil {
 		return nil, err
 	}
+	fullscan, err := mcutil.FullQuery(ctx, host, port)
+	if err != nil {
+		return nil, err
+	}
 	result := api.Response{
 		Players: api.PlayersResponse{
 			Current: int(*res.Players.Online),
 			Max:     int(*res.Players.Max),
+			Names:   fullscan.Players,
 		},
 		Name: res.MOTD.Clean,
 	}
-	for _, player := range res.Players.Sample {
-		result.Players.Names = append(result.Players.Names, player.NameClean)
-	}
+	fmt.Println(res.Players)
 	return &result, nil
 }
 
