@@ -63,6 +63,11 @@ WHERE serverid = ?
 ORDER BY TIMESTAMP DESC 
 LIMIT 1;
 -- name: GetAllServersWithLatestStatus :many
+WITH MaxTimestamps AS (
+  select serverid, MAX(timestamp) AS max_timestamp
+  FROM serverstatuses
+  GROUP BY serverid
+)
 select 
   gameservers.id,
   gameservers.name,
@@ -77,7 +82,7 @@ select
   MAX(timestamp)
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
-group by serverstatuses.serverid
+join MaxTimestamps mt on serverstatuses.serverid and serverstatuses.timestamp = mt.max_timestamp
 order by gameservers.id asc
 ;
 

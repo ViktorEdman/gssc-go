@@ -41,3 +41,4 @@ CREATE TABLE IF NOT EXISTS serverstatusplayers(
 CREATE INDEX IF NOT EXISTS idx_serverstatuses_serverid ON serverstatuses (serverid);
 CREATE INDEX IF NOT EXISTS idx_serverstatusplayers_statusid ON serverstatusplayers (statusid);
 CREATE INDEX IF NOT EXISTS idx_serverstatuses_timestamp ON serverstatuses ("timestamp");
+CREATE INDEX IF NOT EXISTS idx_serverstatuses_timestamp_serverid on serverstatuses (serverid, "timestamp");
