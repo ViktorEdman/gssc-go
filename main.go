@@ -497,17 +497,21 @@ func notifyUpdate(id int64) {
 	eventBroker.BroadcastEvent(broker.SSEEvent{Event: serverEvent, Data: buf.String()})
 }
 
-func scanServer(server data.Gameserver) {
+func scanServer(server data.Gameserver) error {
 	defer notifyUpdate(server.ID)
 	log.Printf("Updating Server ID %v %v:%v\n", server.ID, server.Host, server.Port)
 	res, protocol, err := scanHost(server, time.Second*3)
 	if err != nil {
 		fmt.Println(err)
-		db.AddServerStatus(context.Background(), data.AddServerStatusParams{
+		status, err := db.AddServerStatus(context.Background(), data.AddServerStatusParams{
 			Serverid: server.ID,
 			Online:   false,
 		})
-		return
+		if err != nil {
+			return errors.New("Could not add server status")
+		}
+		updateLatestServerStatus(status.Serverid, status.ID)
+		return nil
 	}
 	db.SetGameServerProtocol(context.Background(), data.SetGameServerProtocolParams{
 		ID:       server.ID,
@@ -558,8 +562,10 @@ func scanServer(server data.Gameserver) {
 			Serverid: server.ID,
 			Online:   false,
 		})
-		return
+		updateLatestServerStatus(status.Serverid, status.ID)
+		return nil
 	}
+	updateLatestServerStatus(status.Serverid, status.ID)
 	for _, name := range res.Players.Names {
 		err := db.AddStatusPlayer(
 			context.Background(),
@@ -572,8 +578,24 @@ func scanServer(server data.Gameserver) {
 			log.Println(err)
 		}
 	}
+	return nil
 }
 
-func updateLatestServerStatus(server_id, status_id int) {
+func updateLatestServerStatus(server_id, status_id int64) error {
+
+	err := db.CreateLatestServerStatus(context.Background(), data.CreateLatestServerStatusParams{
+		ServerID: &server_id,
+		StatusID: &status_id,
+	})
+	if err != nil {
+		err := db.UpdateLatestServerStatus(context.Background(), data.UpdateLatestServerStatusParams{
+			ServerID: &server_id,
+			StatusID: &status_id,
+		})
+		if err != nil {
+			return errors.New("Could not add or update latestServerStatus")
+		}
+	}
+	return nil
 
 }
