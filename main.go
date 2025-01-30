@@ -58,16 +58,6 @@ var (
 )
 
 func main() {
-	f, err := os.Create("cpu.prof")
-	if err != nil {
-		log.Fatal("Could not create CPU profile", err)
-	}
-	defer f.Close()
-	runtime.SetCPUProfileRate(500)
-	if err := pprof.StartCPUProfile(f); err != nil {
-		log.Fatal("could not start CPU profile", err)
-	}
-	defer pprof.StopCPUProfile()
 	authorizer := auth.NewAuthorizer()
 	withAuth := func(h http.HandlerFunc) http.Handler {
 		return authorizer.Middleware(http.HandlerFunc(h))
