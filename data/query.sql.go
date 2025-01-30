@@ -168,27 +168,29 @@ select
   serverstatuses.online,
   serverstatuses.currentplayers,
   serverstatuses.maxplayers,
-  serverstatuses.timestamp,
-  MAX(timestamp)
+  serverstatuses.timestamp
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
-group by serverstatuses.serverid
+join (
+  select serverid, MAX(timestamp) AS max_timestamp
+  FROM serverstatuses
+  GROUP BY serverid
+  limit 50
+) mt on serverstatuses.serverid = mt.serverid and serverstatuses.timestamp = mt.max_timestamp
 order by gameservers.id asc
-LIMIT (select count(*) from gameservers)
 `
 
 type GetAllServersWithLatestStatusRow struct {
-	ID             int64       `db:"id" json:"id"`
-	Name           string      `db:"name" json:"name"`
-	Host           string      `db:"host" json:"host"`
-	Monitored      bool        `db:"monitored" json:"monitored"`
-	Game           *string     `db:"game" json:"game"`
-	Connectport    *int64      `db:"connectport" json:"connectport"`
-	Online         bool        `db:"online" json:"online"`
-	Currentplayers *int64      `db:"currentplayers" json:"currentplayers"`
-	Maxplayers     *int64      `db:"maxplayers" json:"maxplayers"`
-	Timestamp      *time.Time  `db:"timestamp" json:"timestamp"`
-	Max            interface{} `db:"max" json:"max"`
+	ID             int64      `db:"id" json:"id"`
+	Name           string     `db:"name" json:"name"`
+	Host           string     `db:"host" json:"host"`
+	Monitored      bool       `db:"monitored" json:"monitored"`
+	Game           *string    `db:"game" json:"game"`
+	Connectport    *int64     `db:"connectport" json:"connectport"`
+	Online         bool       `db:"online" json:"online"`
+	Currentplayers *int64     `db:"currentplayers" json:"currentplayers"`
+	Maxplayers     *int64     `db:"maxplayers" json:"maxplayers"`
+	Timestamp      *time.Time `db:"timestamp" json:"timestamp"`
 }
 
 func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllServersWithLatestStatusRow, error) {
@@ -211,7 +213,6 @@ func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllSe
 			&i.Currentplayers,
 			&i.Maxplayers,
 			&i.Timestamp,
-			&i.Max,
 		); err != nil {
 			return nil, err
 		}

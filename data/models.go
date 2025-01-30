@@ -22,6 +22,12 @@ type Gameserver struct {
 	Lgsmcommand         *string `db:"lgsmcommand" json:"lgsmcommand"`
 }
 
+type Latestserverstatus struct {
+	ServerID  *int64     `db:"server_id" json:"server_id"`
+	StatusID  *int64     `db:"status_id" json:"status_id"`
+	Timestamp *time.Time `db:"timestamp" json:"timestamp"`
+}
+
 type Serverstatus struct {
 	ID             int64      `db:"id" json:"id"`
 	Serverid       int64      `db:"serverid" json:"serverid"`
