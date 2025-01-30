@@ -40,8 +40,9 @@ CREATE TABLE IF NOT EXISTS serverstatusplayers(
 
 CREATE TABLE IF NOT EXISTS latestserverstatus(
   id INTEGER PRIMARY KEY,
-  server_id INTEGER,
+  server_id INTEGER UNIQUE,
   status_id INTEGER,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (server_id) REFERENCES gameservers(id),
   FOREIGN KEY (status_id) REFERENCES serverstatuses(id)
 );

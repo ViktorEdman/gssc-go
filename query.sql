@@ -63,11 +63,6 @@ WHERE serverid = ?
 ORDER BY TIMESTAMP DESC 
 LIMIT 1;
 -- name: GetAllServersWithLatestStatus :many
-WITH MaxTimestamps AS (
-  select serverid, MAX(timestamp) AS max_timestamp
-  FROM serverstatuses
-  GROUP BY serverid
-)
 select 
   gameservers.id,
   gameservers.name,
@@ -82,7 +77,11 @@ select
   MAX(timestamp)
 from gameservers 
 join serverstatuses on serverstatuses.serverid=gameservers.id
-join MaxTimestamps mt on serverstatuses.serverid and serverstatuses.timestamp = mt.max_timestamp
+join (
+  select serverid, MAX(timestamp) AS max_timestamp
+  FROM serverstatuses
+  GROUP BY serverid
+) mt on serverstatuses.serverid and serverstatuses.timestamp = mt.max_timestamp
 order by gameservers.id asc
 ;
 
@@ -123,3 +122,15 @@ INSERT INTO serverstatusplayers(
 SELECT playerName FROM serverstatusplayers
 WHERE statusid=?;
 
+-- name: CreateLatestServerStatus :exec
+insert into latestserverstatus(
+  server_id, status_id
+) VALUES (
+  @server_id, @status_id
+  );
+
+-- name: UpdateLatestServerStatus :exec
+UPDATE latestserverstatus
+  set status_id = @status_id,
+      timestamp = CURRENT_TIMESTAMP
+  where server_id = @server_id;

@@ -573,3 +573,7 @@ func scanServer(server data.Gameserver) {
 		}
 	}
 }
+
+func updateLatestServerStatus(server_id, status_id int) {
+
+}
