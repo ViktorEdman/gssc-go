@@ -8,5 +8,6 @@ bin/**
 **/*.db
 data.db
 gssc-go
-*.db
+data.db-shm
+data.db-wal
 install-atlas.sh
