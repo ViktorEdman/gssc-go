@@ -64,7 +64,7 @@ ORDER BY TIMESTAMP DESC
 LIMIT 1;
 -- name: GetAllServersWithLatestStatus :many
 select 
-  gameservers.ID,
+  gs.id,
   gs.name,
   gs.host,
   gs.monitored,
@@ -75,10 +75,10 @@ select
   ss.maxplayers,
   ss.timestamp
 from gameservers gs
-join latestserverstatus lss on gameservers.id = lss.server_id
+join latestserverstatus lss on gs.id = lss.server_id
 join serverstatuses ss on lss.status_id = ss.id 
-order by gs.id asc
-;
+order by gs.id asc;
+
 
 -- name: AddServerStatus :one
 INSERT INTO serverstatuses 
