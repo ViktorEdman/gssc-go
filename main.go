@@ -246,7 +246,19 @@ func getAllServersHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ServerList(servers).Render(context.TODO(), w)
 }
 
+type pageCache struct {
+	cached   bool
+	page     templ.Component
+	cachedAt time.Time
+}
+
+var indexCache pageCache
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	if indexCache.cached && time.Since(indexCache.cachedAt) < time.Second*30 {
+		indexCache.page.Render(r.Context(), w)
+		return
+	}
 	servers, err := getLatestStatusesWithPlayers()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -254,9 +266,11 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Couldn't retrieve servers")
 		return
 	}
-	ctx := r.Context()
-	fmt.Println(ctx.Value(auth.ContextKey("Authorized")))
-	templates.Index(servers).Render(r.Context(), w)
+	component := templates.Index(servers)
+	component.Render(r.Context(), w)
+	indexCache.page = component
+	indexCache.cached = true
+	indexCache.cachedAt = time.Now()
 }
 
 func deleteServerHandler(w http.ResponseWriter, r *http.Request) {
