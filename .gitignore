@@ -6,3 +6,7 @@ bin/
 bin/**
 .env
 **/*.db
+data.db
+gssc-go
+*.db
+install-atlas.sh

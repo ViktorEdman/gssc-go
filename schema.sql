@@ -1,3 +1,5 @@
+PRAGMA journal_mode=WAL;
+
 CREATE TABLE IF NOT EXISTS gameservers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name text UNIQUE NOT NULL,

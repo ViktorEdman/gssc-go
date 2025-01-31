@@ -19,7 +19,6 @@ templ AddServerForm() {
 			<input type="number" autocomplete="off" required min="1024" max="65565" name="port"/>
 			<label for="scaninterval">Seconds between scans</label>
 			<input type="number" required min="10" max="600" name="scaninterval" value="30"/>
-			<!--	@LinuxGSMFormPartial(&data.Gameserver{ID: 99}) -->
 			<div class="flex flex-row">
 				<button class="rounded-xl bg-green-400 p-2 m-2 w-24" type="submit">Add</button>
 				<button
@@ -32,7 +31,7 @@ templ AddServerForm() {
 	</dialog>
 }
 
-templ LinuxGSMFormPartial(server *data.Gameserver) {
+/* templ LinuxGSMFormPartial(server *data.Gameserver) {
 	<div>
 		<label for="gsmenabled">Enable LinuxGSM functions</label>
 		<input
@@ -69,46 +68,47 @@ script LinuxGSMForm(id int64) {
 
 }
 
+*/
+
 templ EditServerForm(server data.Gameserver) {
-	<form hx-put={ fmt.Sprintf("/servers/%d", server.ID) } id={ fmt.Sprintf("edit-server-%d", server.ID) } class="flex flex-col flex-grow w-full sm:flex-grow-0 m-2 p-8 fade-me-in bg-opacity-50 bg-black rounded-xl" hx-swap="outerHTML">
-		<label for="name">Server name</label>
-		<input type="text" required name="name" value={ server.Name }/>
-		<label for="host">Hostname / IP address</label>
-		<input type="text" required name="host" value={ server.Host }/>
-		<label for="port">Port number</label>
-		<input type="number" required min="1024" max="65565" name="port" value={ fmt.Sprint(server.Port) }/>
-		<label for="scaninterval">Seconds between scans</label>
-		<input type="number" required min="10" max="600" name="scaninterval" value={ fmt.Sprint(server.Scanintervalseconds) }/>
-		<div>
-			<label for="ismonitored">Enable monitoring</label>
-			<input
-				type="checkbox"
-				name="ismonitored"
-				if server.Monitored {
-					checked
-				}
-			/>
-		</div>
-		<!-- @LinuxGSMFormPartial(&server) -->
-		<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
-		<button class="red rounded-xl p-2 m-2" type="reset" hx-get={ fmt.Sprintf("/servers/%d", server.ID) } hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) } hx-swap="outerHTML">Cancel</button>
-	</form>
+	@layout() {
+		<form hx-put={ fmt.Sprintf("/servers/%d", server.ID) } id={ fmt.Sprintf("edit-server-%d", server.ID) } class="flex flex-col flex-grow w-full sm:flex-grow-0 m-2 p-8 fade-me-in bg-opacity-50 bg-black rounded-xl" hx-swap="outerHTML">
+			<label for="name">Server name</label>
+			<input type="text" required name="name" value={ server.Name }/>
+			<label for="host">Hostname / IP address</label>
+			<input type="text" required name="host" value={ server.Host }/>
+			<label for="port">Port number</label>
+			<input type="number" required min="1024" max="65565" name="port" value={ fmt.Sprint(server.Port) }/>
+			<label for="scaninterval">Seconds between scans</label>
+			<input type="number" required min="10" max="600" name="scaninterval" value={ fmt.Sprint(server.Scanintervalseconds) }/>
+			<div>
+				<label for="ismonitored">Enable monitoring</label>
+				<input
+					type="checkbox"
+					name="ismonitored"
+					if server.Monitored {
+						checked
+					}
+				/>
+			</div>
+			<!-- @LinuxGSMFormPartial(&server) -->
+			<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
+			<button class="red rounded-xl p-2 m-2" type="reset" hx-get={ fmt.Sprintf("/servers/%d", server.ID) } hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) } hx-swap="outerHTML">Cancel</button>
+		</form>
+	}
 }
 
 templ layout() {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
-			<link href="static/css/tailwind.css" rel="stylesheet"/>
-			<link href="static/css/index.css" rel="stylesheet"/>
+			<link href="/static/css/tailwind.css" rel="stylesheet"/>
+			<link href="/static/css/index.css" rel="stylesheet"/>
 			<link rel="icon" href="static/img/favicon.png"/>
 			<meta name="description" content="Monitor and edit game servers"/>
 			<title>GSS Enterprise</title>
-			<script src="static/js/htmx.min.js"></script>
-			<script>
-				htmx.sseEventSource = new EventSource("/events")
-			</script>
-			<script src="static/js/sse.js"></script>
+			<script src="/static/js/htmx.min.js"></script>
+			<script src="/static/js/sse.js"></script>
 			<script>
         function removeParent(e) {
             e.preventDefault()
