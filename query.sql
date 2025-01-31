@@ -64,25 +64,20 @@ ORDER BY TIMESTAMP DESC
 LIMIT 1;
 -- name: GetAllServersWithLatestStatus :many
 select 
-  gameservers.id,
-  gameservers.name,
-  gameservers.host,
-  gameservers.monitored,
-  serverstatuses.game,
-  serverstatuses.connectport,
-  serverstatuses.online,
-  serverstatuses.currentplayers,
-  serverstatuses.maxplayers,
-  serverstatuses.timestamp,
-  MAX(timestamp)
-from gameservers 
-join serverstatuses on serverstatuses.serverid=gameservers.id
-join (
-  select serverid, MAX(timestamp) AS max_timestamp
-  FROM serverstatuses
-  GROUP BY serverid
-) mt on serverstatuses.serverid and serverstatuses.timestamp = mt.max_timestamp
-order by gameservers.id asc
+  gameservers.ID,
+  gs.name,
+  gs.host,
+  gs.monitored,
+  ss.game,
+  ss.connectport,
+  ss.online,
+  ss.currentplayers,
+  ss.maxplayers,
+  ss.timestamp
+from gameservers gs
+join latestserverstatus lss on gameservers.id = lss.server_id
+join serverstatuses ss on lss.status_id = ss.id 
+order by gs.id asc
 ;
 
 -- name: AddServerStatus :one

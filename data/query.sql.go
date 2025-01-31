@@ -177,39 +177,33 @@ func (q *Queries) DeleteGameServer(ctx context.Context, id int64) (Gameserver, e
 
 const getAllServersWithLatestStatus = `-- name: GetAllServersWithLatestStatus :many
 select 
-  gameservers.id,
-  gameservers.name,
-  gameservers.host,
-  gameservers.monitored,
-  serverstatuses.game,
-  serverstatuses.connectport,
-  serverstatuses.online,
-  serverstatuses.currentplayers,
-  serverstatuses.maxplayers,
-  serverstatuses.timestamp,
-  MAX(timestamp)
-from gameservers 
-join serverstatuses on serverstatuses.serverid=gameservers.id
-join (
-  select serverid, MAX(timestamp) AS max_timestamp
-  FROM serverstatuses
-  GROUP BY serverid
-) mt on serverstatuses.serverid and serverstatuses.timestamp = mt.max_timestamp
+  gs.id,
+  gs.name,
+  gs.host,
+  gs.monitored,
+  ss.game,
+  ss.connectport,
+  ss.online,
+  ss.currentplayers,
+  ss.maxplayers,
+  ss.timestamp
+from gameservers gs
+join latestserverstatus lss on gs.id = lss.server_id
+join serverstatuses ss on lss.status_id = ss.id 
 order by gameservers.id asc
 `
 
 type GetAllServersWithLatestStatusRow struct {
-	ID             int64       `db:"id" json:"id"`
-	Name           string      `db:"name" json:"name"`
-	Host           string      `db:"host" json:"host"`
-	Monitored      bool        `db:"monitored" json:"monitored"`
-	Game           *string     `db:"game" json:"game"`
-	Connectport    *int64      `db:"connectport" json:"connectport"`
-	Online         bool        `db:"online" json:"online"`
-	Currentplayers *int64      `db:"currentplayers" json:"currentplayers"`
-	Maxplayers     *int64      `db:"maxplayers" json:"maxplayers"`
-	Timestamp      *time.Time  `db:"timestamp" json:"timestamp"`
-	Max            interface{} `db:"max" json:"max"`
+	ID             int64      `db:"id" json:"id"`
+	Name           string     `db:"name" json:"name"`
+	Host           string     `db:"host" json:"host"`
+	Monitored      bool       `db:"monitored" json:"monitored"`
+	Game           *string    `db:"game" json:"game"`
+	Connectport    *int64     `db:"connectport" json:"connectport"`
+	Online         bool       `db:"online" json:"online"`
+	Currentplayers *int64     `db:"currentplayers" json:"currentplayers"`
+	Maxplayers     *int64     `db:"maxplayers" json:"maxplayers"`
+	Timestamp      *time.Time `db:"timestamp" json:"timestamp"`
 }
 
 func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllServersWithLatestStatusRow, error) {
@@ -232,7 +226,6 @@ func (q *Queries) GetAllServersWithLatestStatus(ctx context.Context) ([]GetAllSe
 			&i.Currentplayers,
 			&i.Maxplayers,
 			&i.Timestamp,
-			&i.Max,
 		); err != nil {
 			return nil, err
 		}
