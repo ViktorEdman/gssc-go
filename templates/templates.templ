@@ -1,9 +1,12 @@
 package templates
 
-import "github.com/ViktorEdman/gssc-go/types"
-import "fmt"
-import "github.com/ViktorEdman/gssc-go/data"
-import "github.com/ViktorEdman/gssc-go/auth"
+import (
+	"context"
+	"fmt"
+	"github.com/ViktorEdman/gssc-go/auth"
+	"github.com/ViktorEdman/gssc-go/data"
+	"github.com/ViktorEdman/gssc-go/types"
+)
 
 templ AddServerForm() {
 	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white ">
@@ -16,7 +19,7 @@ templ AddServerForm() {
 			<input type="number" autocomplete="off" required min="1024" max="65565" name="port"/>
 			<label for="scaninterval">Seconds between scans</label>
 			<input type="number" required min="10" max="600" name="scaninterval" value="30"/>
-			@LinuxGSMFormPartial(&data.Gameserver{ID: 99})
+			<!--	@LinuxGSMFormPartial(&data.Gameserver{ID: 99}) -->
 			<div class="flex flex-row">
 				<button class="rounded-xl bg-green-400 p-2 m-2 w-24" type="submit">Add</button>
 				<button
@@ -86,7 +89,7 @@ templ EditServerForm(server data.Gameserver) {
 				}
 			/>
 		</div>
-		@LinuxGSMFormPartial(&server)
+		<!-- @LinuxGSMFormPartial(&server) -->
 		<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
 		<button class="red rounded-xl p-2 m-2" type="reset" hx-get={ fmt.Sprintf("/servers/%d", server.ID) } hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) } hx-swap="outerHTML">Cancel</button>
 	</form>
