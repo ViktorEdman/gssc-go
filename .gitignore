@@ -6,6 +6,7 @@ bin/
 bin/**
 .env
 **/*.db
+*.db**
 data.db
 gssc-go
 data.db-shm
