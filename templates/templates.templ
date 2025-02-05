@@ -9,7 +9,7 @@ import (
 )
 
 templ AddServerForm() {
-	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl">
+	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl" onclick="event.target === this && this.close()">
 		<form
 			hx-post="/servers"
 			id="addServerForm"
@@ -76,6 +76,10 @@ templ EditServerForm(server data.Gameserver) {
 		id={ fmt.Sprintf("edit-server-%d",
 	server.ID) }
 		class="shadow-xl backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
+		hx-trigger="click[event.target === this]"
+		hx-get={ fmt.Sprintf("/servers/%d", server.ID) }
+		hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
+		hx-swap="outerHTML"
 	>
 		<form
 			hx-put={ fmt.Sprintf("/servers/%d", server.ID) }
@@ -99,9 +103,13 @@ templ EditServerForm(server data.Gameserver) {
 			/>
 			<div>
 				<label for="ismonitored">Enable monitoring</label>
-				<input type="checkbox" name="ismonitored" if server.Monitored {
-	checked
-}/>
+				<input
+					type="checkbox"
+					name="ismonitored"
+					if server.Monitored {
+						checked
+					}
+				/>
 			</div>
 			<!-- @LinuxGSMFormPartial(&server) -->
 			<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
@@ -242,11 +250,13 @@ templ ServerTemplate(server types.ServerStatusWithPlayers) {
 	>
 		<div>
 			<h2 class="text-xl">
-				<span if server.Online {
-	class="green dot"
-} else {
-	class="red dot"
-}></span>{ server.Name }
+				<span
+					if server.Online {
+						class="green dot"
+					} else {
+						class="red dot"
+					}
+				></span>{ server.Name }
 				if !server.Monitored {
 					is not monitored!
 				} else if !server.Online {
