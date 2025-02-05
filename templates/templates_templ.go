@@ -37,7 +37,7 @@ func AddServerForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<dialog id=\"addServerDialog\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white \"><form hx-post=\"/servers\" id=\"addServerForm\" class=\"flex flex-col w-max h-max p-4 fade-me-in bg-black \" hx-on::after-request=\"this.reset(); document.querySelector(&#34;#addServerDialog&#34;).close()\" hx-swap=\"none\"><label for=\"name\">Server name</label> <input type=\"text\" autocomplete=\"off\" autofocus required name=\"name\"> <label for=\"host\">Hostname / IP address</label> <input type=\"text\" autocomplete=\"off\" required name=\"host\"> <label for=\"port\">Port number</label> <input type=\"number\" autocomplete=\"off\" required min=\"1024\" max=\"65565\" name=\"port\"> <label for=\"scaninterval\">Seconds between scans</label> <input type=\"number\" required min=\"10\" max=\"600\" name=\"scaninterval\" value=\"30\"><div class=\"flex flex-row\"><button class=\"rounded-xl bg-green-400 p-2 m-2 w-24\" type=\"submit\">Add</button> <button class=\"rounded-xl bg-red-400 p-2 m-2 cancel-button w-24\" type=\"reset\" onclick=\"document.querySelector(&#34;#addServerDialog&#34;).close()\">Cancel</button></div></form></dialog>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<dialog id=\"addServerDialog\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl\"><form hx-post=\"/servers\" id=\"addServerForm\" class=\"flex flex-col w-max h-max p-4 fade-me-in bg-black \" hx-on::after-request=\"this.reset(); document.querySelector(&#34;#addServerDialog&#34;).close()\" hx-swap=\"none\"><label for=\"name\">Server name</label> <input type=\"text\" autocomplete=\"off\" autofocus required name=\"name\"> <label for=\"host\">Hostname / IP address</label> <input type=\"text\" autocomplete=\"off\" required name=\"host\"> <label for=\"port\">Port number</label> <input type=\"number\" autocomplete=\"off\" required min=\"1024\" max=\"65565\" name=\"port\"> <label for=\"scaninterval\">Seconds between scans</label> <input type=\"number\" required min=\"10\" max=\"600\" name=\"scaninterval\" value=\"30\"><div class=\"flex flex-row\"><button class=\"rounded-xl bg-green-400 p-2 m-2 w-24\" type=\"submit\">Add</button> <button class=\"rounded-xl bg-red-400 p-2 m-2 cancel-button w-24\" type=\"reset\" onclick=\"document.querySelector(&#34;#addServerDialog&#34;).close()\">Cancel</button></div></form></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -131,7 +131,7 @@ func EditServerForm(server data.Gameserver) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog\"><form hx-put=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"shadow-xl backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog\"><form hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

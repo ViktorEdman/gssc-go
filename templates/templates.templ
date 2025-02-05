@@ -9,7 +9,7 @@ import (
 )
 
 templ AddServerForm() {
-	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white ">
+	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl">
 		<form
 			hx-post="/servers"
 			id="addServerForm"
@@ -75,7 +75,7 @@ templ EditServerForm(server data.Gameserver) {
 		hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
 		id={ fmt.Sprintf("edit-server-%d",
 	server.ID) }
-		class="backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
+		class="shadow-xl backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
 	>
 		<form
 			hx-put={ fmt.Sprintf("/servers/%d", server.ID) }
