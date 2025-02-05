@@ -1,40 +1,33 @@
 package templates
 
 import (
-	"context"
-	"fmt"
-	"github.com/ViktorEdman/gssc-go/auth"
-	"github.com/ViktorEdman/gssc-go/data"
-	"github.com/ViktorEdman/gssc-go/types"
+"context"
+"fmt"
+"github.com/ViktorEdman/gssc-go/auth"
+"github.com/ViktorEdman/gssc-go/data"
+"github.com/ViktorEdman/gssc-go/types"
 )
 
 templ AddServerForm() {
-	<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl" onclick="event.target === this && this.close()">
-		<form
-			hx-post="/servers"
-			id="addServerForm"
-			class="flex flex-col w-max h-max p-4 fade-me-in bg-black "
-			hx-on::after-request='this.reset(); document.querySelector("#addServerDialog").close()'
-			hx-swap="none"
-		>
-			<label for="name">Server name</label>
-			<input type="text" autocomplete="off" autofocus required name="name"/>
-			<label for="host">Hostname / IP address</label>
-			<input type="text" autocomplete="off" required name="host"/>
-			<label for="port">Port number</label>
-			<input type="number" autocomplete="off" required min="1024" max="65565" name="port"/>
-			<label for="scaninterval">Seconds between scans</label>
-			<input type="number" required min="10" max="600" name="scaninterval" value="30"/>
-			<div class="flex flex-row">
-				<button class="rounded-xl bg-green-400 p-2 m-2 w-24" type="submit">Add</button>
-				<button
-					class="rounded-xl bg-red-400 p-2 m-2 cancel-button w-24"
-					type="reset"
-					onclick='document.querySelector("#addServerDialog").close()'
-				>Cancel</button>
-			</div>
-		</form>
-	</dialog>
+<dialog id="addServerDialog" class="backdrop:backdrop-blur bg-black rounded-xl text-white shadow-xl"
+	onclick="event.target === this && this.close()">
+	<form hx-post="/servers" id="addServerForm" class="flex flex-col w-max h-max p-4 fade-me-in bg-black "
+		hx-on::after-request='this.reset(); document.querySelector("#addServerDialog").close()' hx-swap="none">
+		<label for="name">Server name</label>
+		<input type="text" autocomplete="off" autofocus required name="name" />
+		<label for="host">Hostname / IP address</label>
+		<input type="text" autocomplete="off" required name="host" />
+		<label for="port">Port number</label>
+		<input type="number" autocomplete="off" required min="1024" max="65565" name="port" />
+		<label for="scaninterval">Seconds between scans</label>
+		<input type="number" required min="10" max="600" name="scaninterval" value="30" />
+		<div class="flex flex-row">
+			<button class="rounded-xl bg-green-400 p-2 m-2 w-24" type="submit">Add</button>
+			<button class="rounded-xl bg-red-400 p-2 m-2 cancel-button w-24" type="reset"
+				onclick='document.querySelector("#addServerDialog").close()'>Cancel</button>
+		</div>
+	</form>
+</dialog>
 }
 
 /* templ LinuxGSMFormPartial(server *data.Gameserver) {
@@ -70,88 +63,63 @@ credentialsForm.classList.remove("flex")
 */
 
 templ EditServerForm(server data.Gameserver) {
-	<dialog
-		hx-swap="outerHTML"
-		hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
-		id={ fmt.Sprintf("edit-server-%d",
-	server.ID) }
-		class="shadow-xl backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
-		hx-trigger="click[event.target === this]"
-		hx-get={ fmt.Sprintf("/servers/%d", server.ID) }
-		hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
-		hx-swap="outerHTML"
-	>
-		<form
-			hx-put={ fmt.Sprintf("/servers/%d", server.ID) }
-			id={ fmt.Sprintf("edit-server-%d", server.ID) }
-			class="flex flex-col flex-grow w-full sm:flex-grow-0 m-0 p-8 fade-me-in bg-opacity-50 bg-black rounded-xl"
-		>
-			<label for="name">Server name</label>
-			<input type="text" required name="name" value={ server.Name }/>
-			<label for="host">Hostname / IP address</label>
-			<input type="text" required name="host" value={ server.Host }/>
-			<label for="port">Port number</label>
-			<input type="number" required min="1024" max="65565" name="port" value={ fmt.Sprint(server.Port) }/>
-			<label for="scaninterval">Seconds between scans</label>
-			<input
-				type="number"
-				required
-				min="10"
-				max="600"
-				name="scaninterval"
-				value={ fmt.Sprint(server.Scanintervalseconds) }
-			/>
-			<div>
-				<label for="ismonitored">Enable monitoring</label>
-				<input
-					type="checkbox"
-					name="ismonitored"
-					if server.Monitored {
-						checked
-					}
-				/>
-			</div>
-			<!-- @LinuxGSMFormPartial(&server) -->
-			<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
-			<button
-				class="red rounded-xl p-2 m-2"
-				type="reset"
-				hx-get={ fmt.Sprintf("/servers/%d", server.ID) }
-				hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
-				hx-swap="outerHTML"
-			>Cancel</button>
-		</form>
-		<script>document.querySelector('.edit-dialog').showModal()</script>
-	</dialog>
+<dialog hx-swap="outerHTML" hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) } id={ fmt.Sprintf("edit-server-%d",
+	server.ID) } class="shadow-xl backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
+	hx-trigger="click[event.target === this]" hx-get={ fmt.Sprintf("/servers/%d", server.ID) }>
+	<form hx-put={ fmt.Sprintf("/servers/%d", server.ID) } id={ fmt.Sprintf("edit-server-%d", server.ID) }
+		class="flex flex-col flex-grow w-full sm:flex-grow-0 m-0 p-8 fade-me-in bg-opacity-50 bg-black rounded-xl"
+		hx-swap="delete">
+		<label for="name">Server name</label>
+		<input type="text" required name="name" value={ server.Name } />
+		<label for="host">Hostname / IP address</label>
+		<input type="text" required name="host" value={ server.Host } />
+		<label for="port">Port number</label>
+		<input type="number" required min="1024" max="65565" name="port" value={ fmt.Sprint(server.Port) } />
+		<label for="scaninterval">Seconds between scans</label>
+		<input type="number" required min="10" max="600" name="scaninterval" value={
+			fmt.Sprint(server.Scanintervalseconds) } />
+		<div>
+			<label for="ismonitored">Enable monitoring</label>
+			<input type="checkbox" name="ismonitored" if server.Monitored { checked } />
+		</div>
+		<!-- @LinuxGSMFormPartial(&server) -->
+		<button class="rounded-xl green p-2 m-2" type="submit">Save</button>
+		<button class="red rounded-xl p-2 m-2" type="reset" hx-get={ fmt.Sprintf("/servers/%d", server.ID) }
+			hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) } hx-swap="outerHTML">Cancel</button>
+	</form>
+	<script>document.querySelector('.edit-dialog').showModal()</script>
+</dialog>
 }
 
 templ layout() {
-	<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<link href="/static/css/tailwind.css" rel="stylesheet"/>
-			<link href="/static/css/index.css" rel="stylesheet"/>
-			<link rel="icon" href="static/img/favicon.png"/>
-			<meta name="description" content="Monitor and edit game servers"/>
-			<title>GSS Enterprise</title>
-			<script src="/static/js/htmx.min.js"></script>
-			<script src="/static/js/sse.js"></script>
-			<script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link href="/static/css/tailwind.css" rel="stylesheet" />
+	<link href="/static/css/index.css" rel="stylesheet" />
+	<link rel="icon" href="static/img/favicon.png" />
+	<meta name="description" content="Monitor and edit game servers" />
+	<title>GSS Enterprise</title>
+	<script src="/static/js/htmx.min.js"></script>
+	<script src="/static/js/sse.js"></script>
+	<script>
 		function removeParent(e) {
 			e.preventDefault()
 			console.log(e)
 			console.log(this)
 		}
 	</script>
-			<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			<noscript>
-				<meta http-equiv="refresh" content="30"/>
-			</noscript>
-		</head>
-		<body class="h-full bg-gradient-to-t from-[#d1138f] to-[#183d88] bg-no-repeat bg-fixed">
-			{ children... }
-			@AddServerForm()
-			<script>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<noscript>
+		<meta http-equiv="refresh" content="30" />
+	</noscript>
+</head>
+
+<body class="h-full bg-gradient-to-t from-[#d1138f] to-[#183d88] bg-no-repeat bg-fixed">
+	{ children... }
+	@AddServerForm()
+	<script>
 		function main() {
 			const sseDot = document.querySelector("#sse-dot")
 			const sseSpan = document.querySelector("#sse-text")
@@ -170,140 +138,114 @@ templ layout() {
 		main()
 
 	</script>
-		</body>
-	</html>
+</body>
+
+</html>
 }
 
 func isAuthorized(ctx context.Context) bool {
-	val, ok := ctx.Value(auth.ContextKey("Authorized")).(bool)
-	if ok {
-		return val
-	} else {
-		return false
-	}
+val, ok := ctx.Value(auth.ContextKey("Authorized")).(bool)
+if ok {
+return val
+} else {
+return false
+}
 }
 
 templ Index(servers []types.ServerStatusWithPlayers) {
-	@layout() {
-		<div class="container mx-auto px-2 pt-2 text-white max-w-3xl">
-			<h1 class="text-3xl bg-red text-gray-100">GSS Enterprise</h1>
-			<p>
-				Authorized: { 
+@layout() {
+<div class="container mx-auto px-2 pt-2 text-white max-w-3xl">
+	<h1 class="text-3xl bg-red text-gray-100">GSS Enterprise</h1>
+	<p>
+		Authorized: {
 		fmt.Sprint(isAuthorized(ctx)) }
-			</p>
-			if isAuthorized(ctx) {
-				<a href="/auth/google/signout" hx-boost>Sign out</a>
-			} else {
-				<a href="/auth/google">Sign in</a>
-			}
-			<div class="flex flex-row flex-wrap">
-				<div id="sse-info " class="p-2 m-2  w-max rounded-xl bg-opacity-50 bg-gray-500">
-					<span id="sse-dot"></span>
-					<span id="sse-text"></span>
-					<noscript>
-						<p>Automatic on-page updates require javascript. </p>
-						<p>Falling back to page refresh every 30 seconds.</p>
-						<p>
-							Last update was at { getTimestamp() }
-						</p>
-					</noscript>
-				</div>
-				if isAuthorized(ctx) {
-					<div>
-						<button
-							id="addServerButton"
-							onclick="document.querySelector('#addServerDialog').showModal()"
-							class="green button p-2 m-2 rounded-xl"
-						>
-							Add Server
-						</button>
-					</div>
-				}
-			</div>
-			<h2 class="text-2xl">Monitored servers</h2>
-			@ServerList(servers)
-		</div>
+	</p>
+	if isAuthorized(ctx) {
+	<a href="/auth/google/signout" hx-boost>Sign out</a>
+	} else {
+	<a href="/auth/google">Sign in</a>
 	}
+	<div class="flex flex-row flex-wrap">
+		<div id="sse-info " class="p-2 m-2  w-max rounded-xl bg-opacity-50 bg-gray-500">
+			<span id="sse-dot"></span>
+			<span id="sse-text"></span>
+			<noscript>
+				<p>Automatic on-page updates require javascript. </p>
+				<p>Falling back to page refresh every 30 seconds.</p>
+				<p>
+					Last update was at { getTimestamp() }
+				</p>
+			</noscript>
+		</div>
+		if isAuthorized(ctx) {
+		<div>
+			<button id="addServerButton" onclick="document.querySelector('#addServerDialog').showModal()"
+				class="green button p-2 m-2 rounded-xl">
+				Add Server
+			</button>
+		</div>
+		}
+	</div>
+	<h2 class="text-2xl">Monitored servers</h2>
+	@ServerList(servers)
+</div>
+}
 }
 
 templ ServerList(servers []types.ServerStatusWithPlayers) {
-	<ul
-		id="server-list"
-		class="flex flex-row flex-wrap text-center"
-		hx-swap="beforeend"
-		hx-ext="sse"
-		sse-swap="newserver"
-		sse-connect="/events"
-	>
-		for _, server := range servers {
-			@ServerTemplate(server)
-		}
-	</ul>
+<ul id="server-list" class="flex flex-row flex-wrap text-center" hx-swap="beforeend" hx-ext="sse" sse-swap="newserver"
+	sse-connect="/events">
+	for _, server := range servers {
+	@ServerTemplate(server)
+	}
+</ul>
 }
 
 templ ServerTemplate(server types.ServerStatusWithPlayers) {
-	<li
-		class="basis-52 m-2 p-4 fade-me-in bg-opacity-50 bg-black rounded-xl flex flex-col grow sm:grow-0 "
-		id={ fmt.Sprintf("server-%d", server.ID) }
-		hx-swap="outerHTML"
-		sse-swap={ fmt.Sprintf("server-%d", server.ID) }
-	>
-		<div>
-			<h2 class="text-xl">
-				<span
-					if server.Online {
-						class="green dot"
-					} else {
-						class="red dot"
-					}
-				></span>{ server.Name }
-				if !server.Monitored {
-					is not monitored!
-				} else if !server.Online {
-					is DOWN!
-				} else {
-					is UP!
-				}
-			</h2>
-		</div>
-		if server.Online {
-			<h3 class="text-lg">Players { fmt.Sprint(*server.Currentplayers) }/{ fmt.Sprint(*server.Maxplayers) }</h3>
+<li class="basis-52 m-2 p-4 fade-me-in bg-opacity-50 bg-black rounded-xl flex flex-col grow sm:grow-0 " id={
+	fmt.Sprintf("server-%d", server.ID) } hx-swap="outerHTML" sse-swap={ fmt.Sprintf("server-%d", server.ID) }>
+	<div>
+		<h2 class="text-xl">
+			<span if server.Online { class="green dot" } else { class="red dot" }></span>{ server.Name }
+			if !server.Monitored {
+			is not monitored!
+			} else if !server.Online {
+			is DOWN!
+			} else {
+			is UP!
+			}
+		</h2>
+	</div>
+	if server.Online {
+	<h3 class="text-lg">Players { fmt.Sprint(*server.Currentplayers) }/{ fmt.Sprint(*server.Maxplayers) }</h3>
+	}
+	if server.Game != nil {
+	Running { *server.Game }
+	}
+	if len(server.Players) > 0 {
+	<ul>
+		for _, player := range server.Players {
+		<li class="list-disc ml-4">{ player }</li>
 		}
-		if server.Game != nil {
-			Running { *server.Game }
-		}
-		if len(server.Players) > 0 {
-			<ul>
-				for _, player := range server.Players {
-					<li class="list-disc ml-4">{ player }</li>
-				}
-			</ul>
-		}
-		if server.Connectport != nil {
-			<div>Join at { server.Host }:{ fmt.Sprint(*server.Connectport) }</div>
-		}
-		<div id={ fmt.Sprintf("timestamp-%d", server.ID) } class="align-bottom table-cell">
-			Last update at { fmt.Sprintf("%02d:%02d:%02d",
+	</ul>
+	}
+	if server.Connectport != nil {
+	<div>Join at { server.Host }:{ fmt.Sprint(*server.Connectport) }</div>
+	}
+	<div id={ fmt.Sprintf("timestamp-%d", server.ID) } class="align-bottom table-cell">
+		Last update at { fmt.Sprintf("%02d:%02d:%02d",
 		server.Timestamp.Local().Hour(),
 		server.Timestamp.Local().Minute(),
 		server.Timestamp.Local().Second()) }
-		</div>
-		if isAuthorized(ctx) {
-			<h3>Server controls</h3>
-			<div class="flex flex-row mt-auto">
-				<button
-					class="bg-blue-500 rounded-xl m-2 p-2 w-16 flex-grow"
-					hx-get={ fmt.Sprintf("/servers/edit/%d",
-			server.ID) }
-					hx-target={ fmt.Sprintf("#server-%d", server.ID) }
-				>Edit</button>
-				<button
-					class="bg-red-500 rounded-xl m-2 p-2 w-16 flex-grow"
-					hx-delete={ fmt.Sprintf("/servers/%d",
-			server.ID) }
-					hx-target={ fmt.Sprintf("#server-%d", server.ID) }
-				>Delete</button>
-			</div>
-		}
-	</li>
+	</div>
+	if isAuthorized(ctx) {
+	<h3>Server controls</h3>
+	<div class="flex flex-row mt-auto">
+		<button class="bg-blue-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-get={ fmt.Sprintf("/servers/edit/%d",
+			server.ID) } hx-target={ fmt.Sprintf("#server-%d", server.ID) }>Edit</button>
+		<button class="bg-red-500 rounded-xl m-2 p-2 w-16 flex-grow" hx-delete={ fmt.Sprintf("/servers/%d",
+			server.ID) } hx-target={ fmt.Sprintf("#server-%d", server.ID) }>Delete</button>
+	</div>
+	}
+</li>
 }
