@@ -75,7 +75,7 @@ templ EditServerForm(server data.Gameserver) {
 		hx-target={ fmt.Sprintf("#edit-server-%d", server.ID) }
 		id={ fmt.Sprintf("edit-server-%d",
 	server.ID) }
-		class="backdrop:backdrop-blur bg-black rounded-xl text-white m-4 p-4 edit-dialog"
+		class="backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog"
 	>
 		<form
 			hx-put={ fmt.Sprintf("/servers/%d", server.ID) }

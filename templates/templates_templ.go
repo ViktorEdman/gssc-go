@@ -131,7 +131,7 @@ func EditServerForm(server data.Gameserver) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white m-4 p-4 edit-dialog\"><form hx-put=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"backdrop:backdrop-blur bg-black rounded-xl text-white p-4 edit-dialog\"><form hx-put=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
