@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ViktorEdman/gssc-go/data"
 	"github.com/ViktorEdman/gssc-go/types"
@@ -26,7 +25,6 @@ func GetLatestStatusWithPlayer(id int64, db *data.Queries) (status *types.Server
 		Timestamp:      server.Timestamp,
 		Players:        []string{},
 	}
-	fmt.Printf("%+v", status)
 	players, err := db.GetPlayersFromStatus(context.Background(), status.ID)
 	if err != nil {
 		return status, nil

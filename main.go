@@ -172,7 +172,6 @@ func putServerHandler(w http.ResponseWriter, r *http.Request) {
 	monitored := r.FormValue("ismonitored") == "on"
 	scaninterval, scanErr := strconv.ParseInt(r.FormValue("scaninterval"), 10, 64)
 	port, err := strconv.ParseInt(r.FormValue("port"), 10, 64)
-	fmt.Println(r.Form)
 	if scanErr != nil || err != nil || host == "" || name == "" {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		fmt.Fprint(w, "Missing values")
@@ -454,7 +453,6 @@ func minecraftQuery(ctx context.Context, host string, port uint16) (*api.Respons
 		},
 		Name: res.MOTD.Clean,
 	}
-	fmt.Println(res.Players)
 	return &result, nil
 }
 
@@ -516,7 +514,6 @@ func scanServer(server data.Gameserver) error {
 	log.Printf("Updating Server ID %v %v:%v\n", server.ID, server.Host, server.Port)
 	res, protocol, err := scanHost(server, time.Second*3)
 	if err != nil {
-		fmt.Println(err)
 		status, err := db.AddServerStatus(context.Background(), data.AddServerStatusParams{
 			Serverid: server.ID,
 			Online:   false,

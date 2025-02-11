@@ -69,7 +69,7 @@ func (broker *Broker) run() {
 			delete(broker.clients, s)
 		case event := <-broker.Events:
 			if len(broker.clients) > 0 {
-				log.Printf("Notifying %d clients.\nMessage: %s", len(broker.clients), event.Event)
+				log.Printf("Notifying %d clients.", len(broker.clients))
 			}
 
 			for clientChannel := range broker.clients {
