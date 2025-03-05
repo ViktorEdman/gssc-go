@@ -7,14 +7,17 @@ import (
 	"embed"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/a-h/templ"
+	tea "github.com/charmbracelet/bubbletea"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mcstatus-io/mcutil/v3"
 
@@ -55,16 +58,32 @@ var (
 )
 
 func main() {
+	interactiveMode := flag.Bool("interactive", false, "Runs gssc in interactive mode with TUI.")
+	flag.Parse()
+
+	if *interactiveMode {
+		nullFile, _ := os.Open(os.DevNull)
+		log.SetOutput(nullFile)
+	}
 	mux := setupHandlers()
 	port := 8080
 	go scanAllServers()
-	for {
-		fmt.Println("Serving on", fmt.Sprint(":", port))
-		err := http.ListenAndServe(":"+fmt.Sprint(port), mux)
-		if err != nil {
-			fmt.Println(err)
-			port++
+	if !*interactiveMode {
+
+		for {
+			fmt.Println("Serving on", fmt.Sprint(":", port))
+			err := http.ListenAndServe(":"+fmt.Sprint(port), mux)
+			if err != nil {
+				fmt.Println(err)
+				port++
+			}
+			os.Exit(0)
 		}
+	}
+	p := tea.NewProgram(initialModel())
+	if _, err := p.Run(); err != nil {
+		fmt.Println("There's been an error", err)
+		os.Exit(1)
 	}
 }
 
