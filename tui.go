@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"time"
 
 	"github.com/ViktorEdman/gssc-go/types"
 	tea "github.com/charmbracelet/bubbletea"
@@ -21,22 +23,38 @@ func initialModel() model {
 		servers: servers,
 		cursor:  0,
 	}
+
+}
+
+type TickMsg time.Time
+
+func doTick() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return TickMsg(t)
+	})
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return doTick()
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case TickMsg:
+		servers, err := getLatestStatusesWithPlayers()
+		if err != nil {
+			servers = []types.ServerStatusWithPlayers{}
+		}
+		m.servers = servers
+		return m, doTick()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "up":
-			if m.cursor >= 0 {
+			if m.cursor > 0 {
 				m.cursor--
 			}
 		case "down":
-			if m.cursor <= len(m.servers) {
+			if m.cursor < len(m.servers)-1 {
 				m.cursor++
 			}
 		case "ctrl+c", "q":
@@ -52,16 +70,18 @@ func (m model) View() string {
 		if m.cursor == i {
 			s += ">  "
 		}
-		s += server.Name + "\n"
+		s += server.Name + "  "
+		s += fmt.Sprintf("Latest update %d seconds ago\n", int(math.Floor(time.Since(*server.Timestamp).Seconds())))
 	}
 	s += "\n\n"
 	s += fmt.Sprintf("Server %s is currently ", m.servers[m.cursor].Name)
 	if m.servers[m.cursor].Online {
 		s += "online with "
-		s += fmt.Sprintf("%d/%d players", *m.servers[m.cursor].Currentplayers, *m.servers[m.cursor].Maxplayers)
+		s += fmt.Sprintf("%d/%d players ", *m.servers[m.cursor].Currentplayers, *m.servers[m.cursor].Maxplayers)
 	} else {
-		s += "offline"
+		s += "offline "
 	}
-	s += "\n Press q to quit. \n"
+	s += "\n"
+	s += "\nPress q to quit. \n"
 	return s
 }
