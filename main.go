@@ -55,6 +55,20 @@ var (
 )
 
 func main() {
+	mux := setupHandlers()
+	port := 8080
+	go scanAllServers()
+	for {
+		fmt.Println("Serving on", fmt.Sprint(":", port))
+		err := http.ListenAndServe(":"+fmt.Sprint(port), mux)
+		if err != nil {
+			fmt.Println(err)
+			port++
+		}
+	}
+}
+
+func setupHandlers() *http.ServeMux {
 	authorizer := auth.NewAuthorizer()
 	withAuth := func(h http.HandlerFunc) http.Handler {
 		return authorizer.Middleware(http.HandlerFunc(h))
@@ -77,16 +91,8 @@ func main() {
 		fmt.Fprintf(w, "Couldn't find %v\n", r.URL.Path)
 	})
 
-	port := 8080
-	go scanAllServers()
-	for {
-		fmt.Println("Serving on", fmt.Sprint(":", port))
-		err := http.ListenAndServe(":"+fmt.Sprint(port), mux)
-		if err != nil {
-			fmt.Println(err)
-			port++
-		}
-	}
+	return mux
+
 }
 
 func getCreateServerHandler(w http.ResponseWriter, r *http.Request) {
