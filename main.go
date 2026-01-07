@@ -59,6 +59,7 @@ var (
 
 func main() {
 	interactiveMode := flag.Bool("interactive", false, "Runs gssc in interactive mode with TUI.")
+	portFlag := flag.Int("port", 8080, "Sets the server port for http server")
 	flag.Parse()
 
 	if *interactiveMode {
@@ -66,7 +67,7 @@ func main() {
 		log.SetOutput(nullFile)
 	}
 	mux := setupHandlers()
-	port := 8080
+	port := *portFlag
 	go scanAllServers()
 	if !*interactiveMode {
 
