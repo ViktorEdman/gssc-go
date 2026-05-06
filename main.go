@@ -60,20 +60,22 @@ var (
 func main() {
 	interactiveMode := flag.Bool("interactive", false, "Runs gssc in interactive mode with TUI.")
 	portFlag := flag.Int("port", 8080, "Sets the server port for http server")
+	corsFlag := flag.String("cors", "", "Adds cross origin requests for the specified list of domains, separated by literal comma (,)")
 	flag.Parse()
 
 	if *interactiveMode {
 		nullFile, _ := os.Open(os.DevNull)
 		log.SetOutput(nullFile)
 	}
-	mux := setupHandlers()
+	cors := *corsFlag
+	mux := setupHandlers(cors)
 	port := *portFlag
 	go scanAllServers()
 	if !*interactiveMode {
 
 		for {
 			fmt.Println("Serving on", fmt.Sprint(":", port))
-			err := http.ListenAndServe(":"+fmt.Sprint(port), mux)
+			err := http.ListenAndServe("0.0.0.0:"+fmt.Sprint(port), mux)
 			if err != nil {
 				fmt.Println(err)
 				port++
@@ -88,14 +90,36 @@ func main() {
 	}
 }
 
-func setupHandlers() *http.ServeMux {
+func setupHandlers(cors string) *http.ServeMux {
 	authorizer := auth.NewAuthorizer()
 	withAuth := func(h http.HandlerFunc) http.Handler {
 		return authorizer.Middleware(http.HandlerFunc(h))
 	}
+
+	withCors := func(next http.HandlerFunc) http.HandlerFunc {
+		if cors == "" {
+			return http.HandlerFunc(next)
+		}
+		return func(w http.ResponseWriter, r *http.Request) {
+			origins := strings.Split(cors, ",")
+			currentOrigin := r.Host
+			for _, origin := range origins {
+				log.Println("Current origin", currentOrigin)
+				log.Println("Checking origin", origin)
+				if origin == currentOrigin {
+					log.Println(origin, "accepted")
+					w.Header().Set("Access-Control-Allow-Origin", origin)
+					break
+				}
+				log.Println(origin, "rejected")
+			}
+			next(w, r)
+
+		}
+	}
 	mux := http.NewServeMux()
 	mux.Handle("/{$}", withAuth(indexHandler))
-	mux.Handle("/api/{$}", withAuth(getApiServerHandler))
+	mux.Handle("/api/{$}", withAuth(withCors(getApiServerHandler)))
 	mux.Handle("POST /servers", withAuth(addServerHandler))
 	mux.Handle("DELETE /servers/{x}", withAuth(deleteServerHandler))
 	mux.Handle("GET /servers/{$}", withAuth(getAllServersHandler))
