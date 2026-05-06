@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -97,29 +98,56 @@ func setupHandlers(cors string) *http.ServeMux {
 	}
 
 	withCors := func(next http.HandlerFunc) http.HandlerFunc {
-		if cors == "" {
-			return http.HandlerFunc(next)
-		}
 		return func(w http.ResponseWriter, r *http.Request) {
 			origins := strings.Split(cors, ",")
-			currentOrigin := r.Host
+			fmt.Println(origins)
+			currentOrigin := r.Header.Get("Origin")
+			if cors == "" {
+				if r.Method == "OPTIONS" {
+					r.Header.Add("Access-Control-Max-Age", "86400")
+					r.Header.Add("Content-Length", "0")
+					w.WriteHeader(204)
+					return
+				}
+				log.Println(currentOrigin, "accepted")
+				w.Header().Set("Access-Control-Allow-Origin", "*")
+				w.Header().Set("Vary", "Origin")
+				w.Header().Set("Access-Control-Allowed-Methods", "GET, POST, OPTIONS")
+				next(w, r)
+				return
+			}
+			originUrl, err := url.Parse(currentOrigin)
+			log.Println("Origin check for", originUrl, "on", r.URL.Path)
+			if err != nil {
+				next(w, r)
+				return
+			}
+			originHost := originUrl.Host
 			for _, origin := range origins {
 				log.Println("Current origin", currentOrigin)
 				log.Println("Checking origin", origin)
-				if origin == currentOrigin {
+				if origin == originHost {
+					if r.Method == "OPTIONS" {
+						r.Header.Add("Access-Control-Max-Age", "86400")
+						r.Header.Add("Content-Length", "0")
+						w.WriteHeader(204)
+						return
+					}
 					log.Println(origin, "accepted")
-					w.Header().Set("Access-Control-Allow-Origin", origin)
+					w.Header().Set("Access-Control-Allow-Origin", currentOrigin)
+					w.Header().Set("Vary", "Origin")
+					w.Header().Set("Access-Control-Allowed-Methods", "GET, POST, OPTIONS")
+					next(w, r)
 					break
 				}
 				log.Println(origin, "rejected")
 			}
-			next(w, r)
 
 		}
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/{$}", withAuth(indexHandler))
-	mux.Handle("/api/{$}", withAuth(withCors(getApiServerHandler)))
+	mux.Handle("/api", withAuth(withCors(getApiServerHandler)))
 	mux.Handle("POST /servers", withAuth(addServerHandler))
 	mux.Handle("DELETE /servers/{x}", withAuth(deleteServerHandler))
 	mux.Handle("GET /servers/{$}", withAuth(getAllServersHandler))
